@@ -53,6 +53,10 @@ spec:
       protocol: TCP
       port: 50051
       targetPort: 50051
+    - name: rest
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
