@@ -26,6 +26,7 @@ spec:
           image: nihbertolo97/grpc-java25-server:v0.0.1
           ports:
             - containerPort: 50051
+            - containerPort: 8080
           readinessProbe:
             httpGet:
               path: /api/health
