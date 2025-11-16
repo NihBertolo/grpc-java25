@@ -23,7 +23,7 @@ spring:
         show_sql: true
 management:
   server:
-    port: ${PORT}          # Porta separada para o Actuator (opcional)
+    port: ${PORT:8080}          # Porta separada para o Actuator (opcional)
 
   endpoints:
     web:
