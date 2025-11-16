@@ -23,13 +23,13 @@ spring:
         show_sql: true
 management:
   server:
-    port: 8080             # Porta separada para o Actuator (opcional)
+    port: ${PORT}          # Porta separada para o Actuator (opcional)
 
   endpoints:
     web:
       exposure:
         include: "*"        # Exponha somente o necessário em produção
-      base-path: /actuator  # Caminho padrão
+      base-path: /api/actuator  # Caminho padrão
 
   endpoint:
     health:
@@ -56,5 +56,5 @@ server:
         enabled: true
     grpc:
         enabled: true
-        port: ${GRPC_PORT:9090}
+        port: ${GRPC_PORT:50051}
         address:
