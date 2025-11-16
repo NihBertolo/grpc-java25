@@ -1,0 +1,97 @@
+# Kubernetes manifests for gRPC communication inside the cluster
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: grpc-demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-server
+  namespace: grpc-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grpc-server
+  template:
+    metadata:
+      labels:
+        app: grpc-server
+    spec:
+      containers:
+        - name: grpc-server
+          image: your-dockerhub/grpc-server:latest
+          ports:
+            - containerPort: 50051
+          readinessProbe:
+            exec:
+              command: ["grpc_health_probe", "-addr=localhost:50051"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["grpc_health_probe", "-addr=localhost:50051"]
+            initialDelaySeconds: 10
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-server
+  namespace: grpc-demo
+spec:
+  selector:
+    app: grpc-server
+  ports:
+    - name: grpc
+      protocol: TCP
+      port: 50051
+      targetPort: 50051
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-client
+  namespace: grpc-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grpc-client
+  template:
+    metadata:
+      labels:
+        app: grpc-client
+    spec:
+      containers:
+        - name: grpc-client
+          image: your-dockerhub/grpc-client:latest
+          env:
+            - name: GRPC_SERVER_ADDRESS
+              value: "grpc-server.grpc-demo.svc.cluster.local:50051"
+          command: ["/bin/sh", "-c"]
+          args:
+            - while true; do echo "calling gRPC server"; java -jar client.jar; sleep 5; done;
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-grpc
+  namespace: grpc-demo
+spec:
+  podSelector:
+    matchLabels:
+      app: grpc-server
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: grpc-client
+      ports:
+        - protocol: TCP
+          port: 50051
+  policyTypes:
+    - Ingress
