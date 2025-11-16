@@ -1,11 +1,16 @@
-# Kubernetes manifests for gRPC communication inside the cluster
-
----
+# ------------------------------
+# Namespace
+# ------------------------------
 apiVersion: v1
 kind: Namespace
 metadata:
   name: grpc-demo
+  labels:
+    istio-injection: enabled
 ---
+# ------------------------------
+# Deployment
+# ------------------------------
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -40,6 +45,9 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 20
 ---
+# ------------------------------
+# Service
+# ------------------------------
 apiVersion: v1
 kind: Service
 metadata:
@@ -58,6 +66,9 @@ spec:
       port: 8080
       targetPort: 8080
 ---
+# ------------------------------
+# NetworkPolicy
+# ------------------------------
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -79,3 +90,62 @@ spec:
           port: 50051
   policyTypes:
     - Ingress
+---
+# ------------------------------
+# Istio Gateway
+# (expor REST e gRPC para fora)
+# ------------------------------
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: grpc-gateway
+  namespace: grpc-demo
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+    - port:
+        number: 50051
+        name: grpc
+        protocol: GRPC
+      hosts:
+        - "*"
+---
+# ------------------------------
+# VirtualService
+# ------------------------------
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: grpc-server-vs
+  namespace: grpc-demo
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - grpc-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: grpc-server.grpc-demo.svc.cluster.local
+            port:
+              number: 8080
+  tls:
+    - match:
+        - port: 50051
+          sniHosts:
+            - "*"
+      route:
+        - destination:
+            host: grpc-server.grpc-demo.svc.cluster.local
+            port:
+              number: 50051
