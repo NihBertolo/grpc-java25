@@ -110,12 +110,20 @@
             <version>${protobuf.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-services</artifactId>
+            <version>1.62.2</version>
+        </dependency>
+
         <!-- Optional: Spring Boot Actuator -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
     </dependencies>
+
+
 
     <!-- plugin: protobuf codegen -->
     <build>

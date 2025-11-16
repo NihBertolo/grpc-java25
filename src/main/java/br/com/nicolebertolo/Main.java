@@ -3,6 +3,7 @@ package br.com.nicolebertolo;
 import br.com.nicolebertolo.infrastructure.adapter.inbound.grpc.ListingGrpc;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.protobuf.services.ProtoReflectionService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -19,6 +20,7 @@ public class Main {
         Server server = ServerBuilder
                 .forPort(50051)
                 .addService(listingGrpc)
+                .addService(ProtoReflectionService.newInstance())
                 .executor(Executors.newVirtualThreadPerTaskExecutor())
                 .build()
                 .start();
