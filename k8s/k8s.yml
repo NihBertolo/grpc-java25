@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: grpc-server
-          image: nihbertolo97/grpc-java25-server
+          image: nihbertolo97/grpc-java25-server:v0.0.1
           ports:
             - containerPort: 50051
           readinessProbe:
