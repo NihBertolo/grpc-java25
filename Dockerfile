@@ -6,7 +6,8 @@ WORKDIR /app
 # Copia apenas o pom.xml primeiro para caching das dependências
 COPY pom.xml .
 RUN mvn -q -DskipTests dependency:resolve
-
+ENV PORT=8080
+ENV GRPC_PORT=50051
 # Agora copia o restante do código
 COPY src ./src
 
