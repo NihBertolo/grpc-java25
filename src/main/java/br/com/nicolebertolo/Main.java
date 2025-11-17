@@ -18,13 +18,12 @@ public class Main {
 
         ApplicationContext context = SpringApplication.run(Main.class, args);
 
-        // pega a implementação correta anotada como @Service no Spring
-        ListingServiceGrpc.ListingServiceImplBase listingService =
+        ListingServiceGrpc.ListingServiceImplBase listingGrpc =
                 context.getBean(ListingGrpc.class);
 
         Server server = ServerBuilder
                 .forPort(50051)
-                .addService(listingService) // <-- agora está correto
+                .addService(listingGrpc)
                 .addService(ProtoReflectionService.newInstance())
                 .executor(Executors.newVirtualThreadPerTaskExecutor())
                 .build()
