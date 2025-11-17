@@ -149,3 +149,22 @@ spec:
             host: grpc-server.grpc-demo.svc.cluster.local
             port:
               number: 50051
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: grpc-server-scaled
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: grpc-demo
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus.monitoring.svc.cluster.local:9090
+        metricName: istio_requests_total
+        threshold: '100'
+        query: |
+          sum(rate(istio_requests_total{destination_workload="grpc-server",response_code="200"}[1m]))
