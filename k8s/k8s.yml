@@ -157,7 +157,7 @@ metadata:
 spec:
   scaleTargetRef:
     kind: Deployment
-    name: grpc-demo
+    name: grpc-server
   minReplicaCount: 1
   maxReplicaCount: 10
   triggers:
