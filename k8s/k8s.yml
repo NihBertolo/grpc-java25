@@ -164,7 +164,7 @@ spec:
   triggers:
     - type: prometheus
       metadata:
-        serverAddress: http://prometheus.monitoring.svc.cluster.local:9090
+        serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
         metricName: istio_requests_total
         threshold: '100'
         query: |
