@@ -154,6 +154,58 @@ spec:
             port:
               number: 50051
 ---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: istiod-monitor
+  namespace: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+      - istio-system
+  selector:
+    matchLabels:
+      app: istiod
+  endpoints:
+    - port: http-monitoring
+      path: /metrics
+      interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: istio-ingress-monitor
+  namespace: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+      - istio-system
+  selector:
+    matchLabels:
+      istio: ingressgateway
+  endpoints:
+    - port: status-port
+      path: /stats/prometheus
+      interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: istio-sidecar
+  namespace: monitoring
+spec:
+  namespaceSelector:
+    any: true
+  selector:
+    matchExpressions:
+      - key: istio.io/rev
+        operator: Exists
+  podMetricsEndpoints:
+    - port: envoy-prometheus
+      path: /stats/prometheus
+      interval: 15s
+
+---
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
