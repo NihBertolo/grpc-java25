@@ -154,6 +154,7 @@ apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: grpc-server-scaled
+  namespace: grpc-demo
 spec:
   scaleTargetRef:
     kind: Deployment
