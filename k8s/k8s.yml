@@ -53,6 +53,12 @@ kind: Service
 metadata:
   name: grpc-server
   namespace: grpc-demo
+  labels:
+    app: grpc-server
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/path: "/api/actuator/prometheus"
+      prometheus.io/port: "8080"
 spec:
   selector:
     app: grpc-server
