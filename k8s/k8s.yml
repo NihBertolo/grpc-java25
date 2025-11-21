@@ -16,12 +16,6 @@ kind: Deployment
 metadata:
   name: grpc-server
   namespace: grpc-demo
-  labels:
-    app: grpc-server
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/path: "/api/actuator/prometheus"
-    prometheus.io/port: "8080"
 spec:
   replicas: 1
   selector:
@@ -31,6 +25,10 @@ spec:
     metadata:
       labels:
         app: grpc-server
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/api/actuator/prometheus"
+        prometheus.io/port: "8080"
     spec:
       containers:
         - name: grpc-server
